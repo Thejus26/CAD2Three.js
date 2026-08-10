@@ -1,15 +1,23 @@
-# Current Feature context: testing-setup
+# Current Feature: Milestone 1.2 WebGL Viewport & Navigation Core
 
 ## Overview
-Infrastructure setup for automated Vitest testing, React Testing Library, and testing processes added to feature spec workflows.
+Develop the interactive 3D WebGL viewport canvas with responsive sizing, studio lighting, shadow receiving ground grid, and camera controls.
 
 ## Active Sub-tasks
-- [x] Configure Vitest and React Testing Library (`vitest`, `@testing-library/react`, `jsdom`).
-- [x] Add `npm run test` and `npm run test:run` scripts.
-- [x] Integrate `npm run test:run` as Step 2 in `/feature-complete` skill.
-- [x] Update all feature spec files with Testing Process and Acceptance Criteria.
-- [x] Update `/feature-start` skill to sync `context/current-feature.md` with active milestone spec.
+- [ ] Implement responsive full-screen Canvas container component.
+- [ ] Set up default lighting setup (Ambient light, Directional Key & Fill lights, Studio HDRI map).
+- [ ] Add ground plane grid helper with fading grid lines (`Grid`) and shadow reception.
+- [ ] Implement `OrbitControls` with smooth damping, zoom boundaries, and pan constraints.
+- [ ] Build 3D Orientation ViewCube / Axis Gizmo in the top-right corner.
+- [ ] Create camera preset toolbar (Isometric, Front, Top, Right, Left, Back views).
+
+## Testing Process
+- Unit test camera preset calculation functions and view toolbar interactions in `src/components/viewport/CameraControls.test.tsx`.
+- Test Canvas layout and resize event handler triggers in `src/components/viewport/ViewportCanvas.test.tsx`.
+- Run `npm run test:run` to verify test suite completion.
 
 ## Acceptance Criteria
-- [x] `npm run test:run` executes and passes all test suites.
-- [x] `npm run build` succeeds without TypeScript/Vite errors.
+- [ ] `npm run test:run` passes unit tests for camera presets and viewport layout components.
+- [ ] Viewport resizes dynamically when browser window dimensions change.
+- [ ] Camera controls rotate, pan, and zoom smoothly at 60 FPS.
+- [ ] Clicking preset buttons animates camera smoothly to target angle.
