@@ -14,6 +14,12 @@ Develop the interactive assembly tree component hierarchy navigator, part isolat
 - [ ] Compute and display volume, surface area, bounding box dimensions, and polygon count per selected part.
 - [ ] Build material inspector panel allowing live color overrides, metalness/roughness adjustments, and opacity/X-Ray toggles.
 
+## Testing Process
+- Test assembly tree search filter algorithm and node selection state sync in `src/components/assembly/AssemblyTree.test.tsx`.
+- Unit test geometric volume, surface area, and bounding box calculation utility functions in `src/utils/meshProperties.test.ts`.
+- Run `npm run test:run` to execute assembly inspector tests.
+
 ## Acceptance Criteria
+- [ ] `npm run test:run` passes unit tests for tree filter algorithms and geometric mesh calculations.
 - [ ] Clicking a node in the assembly tree highlights the corresponding 3D mesh in the viewport (and vice-versa).
 - [ ] Isolate mode dims or hides all unselected components smoothly.

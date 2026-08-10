@@ -32,12 +32,17 @@ This skill safely finalizes a CAD2Three.js feature branch: it verifies TypeScrip
 
 3. Extract `<step-name>` from `feature/<step-name>`.
 
-### Step 2: Build Verification (CAD2Three.js Stack)
-1. Run local Vite/TypeScript production build verification before committing:
+### Step 2: Test & Build Verification (CAD2Three.js Stack)
+1. Run Vitest test suite first to ensure all unit and integration tests pass:
+   ```bash
+   npm run test:run
+   ```
+2. If tests fail, **ABORT** execution and report failing test output.
+3. Run local Vite/TypeScript production build verification before committing:
    ```bash
    npm run build
    ```
-2. If build fails due to TypeScript lints or bundle errors, **ABORT** and report build errors to the user.
+4. If build fails due to TypeScript lints or bundle errors, **ABORT** and report build errors to the user.
 
 ### Step 3: Stage & Commit Feature Changes
 1. Stage all changes:

@@ -17,7 +17,13 @@ Develop the OpenCascade WASM parsing pipeline for STEP and IGES files, convertin
 ### 2.2.3: Native WASM Memory Cleanup
 - [ ] Implement garbage collection cleanup logic to call native C++ `.delete()` on OpenCascade C++ handles after mesh extraction to prevent heap memory exhaustion.
 
+## Testing Process
+- Test deflection quality slider calculation and parameter sanitization in `src/services/tessellation.test.ts`.
+- Unit test vertex buffer conversion functions and C++ memory handle disposal triggers in `src/services/occMemory.test.ts`.
+- Run `npm run test:run` to verify tessellation helper tests pass.
+
 ## Acceptance Criteria
+- [ ] `npm run test:run` passes unit tests for deflection math and native memory disposal handlers.
 - [ ] STEP (`.stp`, `.step`) and IGES (`.igs`, `.iges`) files parse and tessellate without UI freeze.
 - [ ] Assembly tree hierarchy and original CAD colors display accurately in Three.js viewport.
 - [ ] Zero native C++ heap memory leaks detected after processing multiple models.

@@ -15,7 +15,13 @@ Develop the interactive 3D WebGL viewport canvas with responsive sizing, studio 
 - [ ] Build 3D Orientation ViewCube / Axis Gizmo in the top-right corner.
 - [ ] Create camera preset toolbar (Isometric, Front, Top, Right, Left, Back views).
 
+## Testing Process
+- Unit test camera preset calculation functions and view toolbar interactions in `src/components/viewport/CameraControls.test.tsx`.
+- Test Canvas layout and resize event handler triggers in `src/components/viewport/ViewportCanvas.test.tsx`.
+- Run `npm run test:run` to verify test suite completion.
+
 ## Acceptance Criteria
+- [ ] `npm run test:run` passes unit tests for camera presets and viewport layout components.
 - [ ] Viewport resizes dynamically when browser window dimensions change.
 - [ ] Camera controls rotate, pan, and zoom smoothly at 60 FPS.
 - [ ] Clicking preset buttons animates camera smoothly to target angle.

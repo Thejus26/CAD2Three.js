@@ -16,6 +16,15 @@ Set up the core React 18, Vite, TypeScript, and 3D rendering dependency framewor
 - [ ] Install React Three Fiber & Drei (`@react-three/fiber`, `@react-three/drei`).
 - [ ] Configure Vite build plugins for Web Workers (`vite-plugin-top-level-await`, static asset worker handling).
 
+### 1.1.3: Configure Test Suite & Runner
+- [ ] Configure Vitest and React Testing Library (`vitest`, `@testing-library/react`, `jsdom`).
+- [ ] Add `npm run test` and `npm run test:run` scripts.
+
+## Testing Process
+- Run `npm run test:run` to execute Vitest unit/integration tests.
+- Verify environment setup and root App rendering via `src/App.test.tsx`.
+
 ## Acceptance Criteria
+- [ ] `npm run test:run` executes and passes all test suites.
 - [ ] `npm run dev` builds cleanly without warnings or errors.
 - [ ] Vite successfully bundles Web Worker imports.

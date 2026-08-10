@@ -13,6 +13,12 @@ Set up OpenCascade.js WebAssembly build and establish off-thread Web Worker arch
 - [ ] Implement `cadWorker.worker.ts` for off-thread CAD processing.
 - [ ] Implement `comlink` or ArrayBuffer transferrable messaging protocol between main UI thread and CAD worker.
 
+## Testing Process
+- Mock Web Worker messaging in `src/workers/cadWorker.test.ts` to test worker initialization, message serialization, and transferrable ArrayBuffer handling.
+- Verify COOP/COEP header configuration via dev server integration test.
+- Run `npm run test:run` to confirm worker messaging tests pass.
+
 ## Acceptance Criteria
+- [ ] `npm run test:run` passes unit tests for CAD worker message passing and memory transfer protocols.
 - [ ] OpenCascade WASM loads cleanly inside Web Worker without blocking main UI thread.
 - [ ] SharedArrayBuffer / transferrable buffers transfer file byte data instantly.
