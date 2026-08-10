@@ -1,0 +1,20 @@
+# Milestone 4.2: 3D Precision Tools (Measurement & Clipping)
+
+## Overview
+Implement 3D CAD measurement tools (distance, angles, bounding dimensions) and dynamic cross-section clipping planes.
+
+## Sub-tasks
+
+### 4.2.1: Interactive Measurement Tool
+- [ ] Implement Raycasting vertex/edge snapping helper.
+- [ ] Build Point-to-Point distance measurement tool with 3D line overlays and HTML annotation labels.
+- [ ] Implement 3-point angle measurement tool.
+
+### 4.2.2: Dynamic Sectioning / Clipping Planes
+- [ ] Implement X, Y, Z axis clipping planes using WebGL local clipping planes.
+- [ ] Build interactive 3D transform gizmo handles for sliding and rotating clipping planes.
+- [ ] Render solid stencil caps over cut geometry faces.
+
+## Acceptance Criteria
+- [ ] Distance measurements snap accurately to mesh vertices with < 0.01mm tolerance.
+- [ ] Cross-sectioning clips the model smoothly in real-time with solid stencil caps.
