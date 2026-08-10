@@ -1,13 +1,12 @@
 import React from 'react';
-import { Canvas } from '@react-three/fiber';
-import { OrbitControls } from '@react-three/drei';
+import { ViewportCanvas } from '@/components/viewport/ViewportCanvas';
 import './App.css';
 
 function SampleMesh() {
   return (
-    <mesh>
-      <boxGeometry args={[1, 1, 1]} />
-      <meshStandardMaterial color="royalblue" />
+    <mesh castShadow receiveShadow>
+      <boxGeometry args={[1.5, 1.5, 1.5]} />
+      <meshStandardMaterial color="#89b4fa" roughness={0.3} metalness={0.2} />
     </mesh>
   );
 }
@@ -31,20 +30,27 @@ export function App() {
 
   return (
     <div style={{ width: '100vw', height: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <header style={{ padding: '1rem', background: '#1e1e2e', color: '#cdd6f4', fontFamily: 'sans-serif' }}>
-        <h1 style={{ margin: 0, fontSize: '1.5rem' }}>CAD2Three.js - Environment Foundation</h1>
-        <p style={{ margin: '0.5rem 0 0 0', fontSize: '0.9rem', color: '#a6adc8' }}>
-          Worker status: <strong>{workerMsg}</strong>
+      <header
+        style={{
+          padding: '0.75rem 1.25rem',
+          background: '#1e1e2e',
+          color: '#cdd6f4',
+          fontFamily: 'sans-serif',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+        }}
+      >
+        <h1 style={{ margin: 0, fontSize: '1.25rem' }}>CAD2Three.js Viewport</h1>
+        <p style={{ margin: 0, fontSize: '0.85rem', color: '#a6adc8' }}>
+          Worker: <strong>{workerMsg}</strong>
         </p>
       </header>
       <div style={{ flex: 1, position: 'relative' }}>
-        <Canvas camera={{ position: [3, 3, 3] }}>
-          <ambientLight intensity={0.5} />
-          <directionalLight position={[10, 10, 5]} intensity={1} />
+        <ViewportCanvas>
           <SampleMesh />
-          <OrbitControls />
-          <gridHelper args={[10, 10]} />
-        </Canvas>
+        </ViewportCanvas>
       </div>
     </div>
   );
