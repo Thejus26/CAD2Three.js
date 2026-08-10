@@ -55,10 +55,14 @@ This skill automates starting a new development feature branch tailored for the 
    git checkout -b feature/<step-name>
    ```
 
-### Step 5: Confirmation & Output
+### Step 5: Sync Current Feature Context
+1. Locate the corresponding feature specification markdown file in `context/features/` matching the requested `<step-name>` or referenced spec file (e.g. `context/features/phase-1/milestone-1-1-environment-foundation-spec.md`).
+2. Overwrite `context/current-feature.md` with the content of the target milestone spec file so AI agents and developer tools have active context on sub-tasks, testing process, and acceptance criteria.
+
+### Step 6: Confirmation & Output
 1. Confirm active branch:
    ```bash
    git branch --show-current
    ```
 2. Output a clear success message:
-   > "✅ **CAD2Three.js Feature Branch Created:** Switched to `feature/<step-name>`. Ready to work on React / Three.js / WASM modules!"
+   > "✅ **CAD2Three.js Feature Branch Created:** Switched to `feature/<step-name>`. Updated `context/current-feature.md` with milestone specification! Ready to work on React / Three.js / WASM modules!"

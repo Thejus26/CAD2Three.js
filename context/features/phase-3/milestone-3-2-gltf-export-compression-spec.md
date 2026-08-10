@@ -16,7 +16,13 @@ Develop a client-side mesh optimization, Draco compression, and glTF 2.0 export 
 ### 3.2.3: Local Caching Infrastructure
 - [ ] Implement `IndexedDB` storage service using SHA-256 model file hashes to cache converted GLB buffers for instant subsequent loads.
 
+## Testing Process
+- Test GLB export buffer serializer in `src/services/gltfExporter.test.ts`.
+- Unit test IndexedDB hashing and cache retrieval logic in `src/services/cacheService.test.ts`.
+- Run `npm run test:run` to execute compression and cache unit tests.
+
 ## Acceptance Criteria
+- [ ] `npm run test:run` passes unit tests for glTF serialization and IndexedDB hashing/caching services.
 - [ ] User can export converted CAD scenes as compressed `.glb` files.
 - [ ] Draco compression reduces file payload size by 70–80%.
 - [ ] Previously loaded CAD files open instantly from IndexedDB cache.

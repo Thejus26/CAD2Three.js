@@ -15,7 +15,13 @@ Implement client-side drag-and-drop file uploader and integrate Three.js native 
 - [ ] Implement `OBJLoaderService` for parsing OBJ files with optional MTL material files.
 - [ ] Create auto-bounding camera focus helper (`fitCameraToSelection`) to center and frame loaded meshes.
 
+## Testing Process
+- Test drag-and-drop dropzone format validation logic and file type rejection in `src/components/uploader/Dropzone.test.tsx`.
+- Unit test `STLLoaderService` and `OBJLoaderService` geometry parsing with mock ArrayBuffers in `src/services/loaders.test.tsx`.
+- Run `npm run test:run` to execute loader and uploader tests.
+
 ## Acceptance Criteria
+- [ ] `npm run test:run` passes unit tests for STL/OBJ parsing logic and dropzone file validations.
 - [ ] User can drag and drop `.stl` or `.obj` files into the browser window.
 - [ ] Progress bar updates accurately during parsing.
 - [ ] Loaded models render centered in the viewport with automatically adjusted camera bounds.

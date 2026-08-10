@@ -15,6 +15,12 @@ Implement 3D CAD measurement tools (distance, angles, bounding dimensions) and d
 - [ ] Build interactive 3D transform gizmo handles for sliding and rotating clipping planes.
 - [ ] Render solid stencil caps over cut geometry faces.
 
+## Testing Process
+- Unit test 3D distance and angle calculation math helpers in `src/utils/measurementMath.test.ts`.
+- Test clipping plane normal and constant offset calculation handlers in `src/utils/clippingPlanes.test.ts`.
+- Run `npm run test:run` to execute 3D tool math unit tests.
+
 ## Acceptance Criteria
+- [ ] `npm run test:run` passes unit tests for measurement math and clipping plane transformations.
 - [ ] Distance measurements snap accurately to mesh vertices with < 0.01mm tolerance.
 - [ ] Cross-sectioning clips the model smoothly in real-time with solid stencil caps.
