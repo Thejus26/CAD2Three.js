@@ -1,6 +1,6 @@
 ---
 name: code-audit
-description: Audits the CAD2Three.js codebase by running ESLint, TypeScript compiler checks, npm audit, and Vitest/Playwright test suites.
+description: Audits the CAD2Three.js codebase by running ESLint, TypeScript compiler checks, npm audit, and Vitest/Playwright test suites, utilizing Context7 MCP for documentation lookups.
 ---
 
 # Skill: `code-audit`
@@ -13,10 +13,11 @@ security_cmd: "npm audit --json"
 test_cmd: "npm test"
 e2e_cmd: "npx playwright test"
 report_output_file: "./audit-reports/cad2three-audit-report.md"
+context7_mcp: "context7" # MCP server for resolving library IDs and querying up-to-date documentation
 ```
 
 ## Description
-This skill performs a complete code audit tailored specifically for **CAD2Three.js** (React 18, Vite, TypeScript, Three.js, `@react-three/fiber`, WebAssembly workers).
+This skill performs a complete code audit tailored specifically for **CAD2Three.js** (React 18, Vite, TypeScript, Three.js, `@react-three/fiber`, WebAssembly workers) and uses the **Context7 MCP** server (`resolve-library-id`, `query-docs`) to verify up-to-date documentation, API signatures, and migration guidelines.
 
 ---
 
@@ -53,7 +54,13 @@ This skill performs a complete code audit tailored specifically for **CAD2Three.
    npx playwright test
    ```
 
-### Step 5: Report Synthesis & Summary Generation
+### Step 5: Documentation & API Audit via Context7 MCP
+1. For any deprecation warnings, API mismatches, or security advisories identified in previous steps:
+   - Resolve the exact library ID using `context7:resolve-library-id` (e.g., for `three`, `@react-three/fiber`, `vite`, `typescript`).
+   - Fetch up-to-date API references and migration docs via `context7:query-docs`.
+2. Cross-reference CAD and WebGL memory management guidelines with the retrieved documentation.
+
+### Step 6: Report Synthesis & Summary Generation
 Synthesize findings into an audit report:
 
 ```markdown
@@ -66,6 +73,7 @@ Synthesize findings into an audit report:
 - **ESLint Analysis:** <PASS/FAIL> (<LINT_ERRORS> issues)
 - **Security Audit (`npm audit`):** <PASS/FAIL> (<CRITICAL_COUNT> critical, <HIGH_COUNT> high)
 - **Unit & WebGL Tests:** <PASS/FAIL> (<PASSED_TESTS>/<TOTAL_TESTS> passed)
+- **Context7 Documentation Scan:** Verified against latest library docs.
 
 ## CAD & WebGL Specific Audit Checklist
 - [ ] **Off-Thread Processing:** All OpenCascade WASM & web-ifc parsing calls run inside Web Workers.
@@ -73,5 +81,6 @@ Synthesize findings into an audit report:
 - [ ] **SharedArrayBuffer Headers:** Vite dev server and production configs emit COOP/COEP headers.
 
 ## Action Items & Fix Recommendations
-1. `<Detailed issue breakdown with file line links>`
+1. `<Detailed issue breakdown with file line links and Context7 documentation references>`
 ```
+
