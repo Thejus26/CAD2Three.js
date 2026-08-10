@@ -1,23 +1,23 @@
-# Current Feature: Milestone 1.2 WebGL Viewport & Navigation Core
+# Current Feature: Milestone 1.3 Drag-and-Drop Uploader & Polyhedral Mesh Loaders
 
 ## Overview
-Develop the interactive 3D WebGL viewport canvas with responsive sizing, studio lighting, shadow receiving ground grid, and camera controls.
+Implement client-side drag-and-drop file uploader and integrate Three.js native loaders for polyhedral mesh formats (STL and OBJ).
 
 ## Active Sub-tasks
-- [ ] Implement responsive full-screen Canvas container component.
-- [ ] Set up default lighting setup (Ambient light, Directional Key & Fill lights, Studio HDRI map).
-- [ ] Add ground plane grid helper with fading grid lines (`Grid`) and shadow reception.
-- [ ] Implement `OrbitControls` with smooth damping, zoom boundaries, and pan constraints.
-- [ ] Build 3D Orientation ViewCube / Axis Gizmo in the top-right corner.
-- [ ] Create camera preset toolbar (Isometric, Front, Top, Right, Left, Back views).
+- [ ] Build drag-and-drop overlay zone with format validation (`.stl`, `.obj`).
+- [ ] Create floating loading modal displaying progress percentage and status text.
+- [ ] Add file upload error handling and user notification toasts.
+- [ ] Implement `STLLoaderService` for parsing binary and ASCII STL files into Three.js `BufferGeometry`.
+- [ ] Implement `OBJLoaderService` for parsing OBJ files with optional MTL material files.
+- [ ] Create auto-bounding camera focus helper (`fitCameraToSelection`) to center and frame loaded meshes.
 
 ## Testing Process
-- Unit test camera preset calculation functions and view toolbar interactions in `src/components/viewport/CameraControls.test.tsx`.
-- Test Canvas layout and resize event handler triggers in `src/components/viewport/ViewportCanvas.test.tsx`.
-- Run `npm run test:run` to verify test suite completion.
+- Test drag-and-drop dropzone format validation logic and file type rejection in `src/components/uploader/Dropzone.test.tsx`.
+- Unit test `STLLoaderService` and `OBJLoaderService` geometry parsing with mock ArrayBuffers in `src/services/loaders.test.tsx`.
+- Run `npm run test:run` to execute loader and uploader tests.
 
 ## Acceptance Criteria
-- [ ] `npm run test:run` passes unit tests for camera presets and viewport layout components.
-- [ ] Viewport resizes dynamically when browser window dimensions change.
-- [ ] Camera controls rotate, pan, and zoom smoothly at 60 FPS.
-- [ ] Clicking preset buttons animates camera smoothly to target angle.
+- [ ] `npm run test:run` passes unit tests for STL/OBJ parsing logic and dropzone file validations.
+- [ ] User can drag and drop `.stl` or `.obj` files into the browser window.
+- [ ] Progress bar updates accurately during parsing.
+- [ ] Loaded models render centered in the viewport with automatically adjusted camera bounds.
