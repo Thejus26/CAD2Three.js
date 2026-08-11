@@ -1,25 +1,24 @@
-# Milestone 5.1: Quality Assurance, Automated Testing & Memory Auditing
+# Milestone 5.2: CI/CD Deployment & Progressive Web App (PWA) Setup
 
 ## Overview
-Establish automated testing infrastructure, WebGL rendering regression tests, and comprehensive WASM memory leak auditing.
+Configure continuous integration/deployment automation pipelines and Progressive Web App setup for offline CAD viewing capabilities.
 
 ## Sub-tasks
 
-### 5.1.1: Automated Unit & Integration Tests
-- [x] Implement unit tests (Vitest) for matrix transformations, CAD deflection converters, and glTF metadata exporters.
-- [x] Set up Playwright WebGL visual regression testing against standard benchmark CAD models (STEP, IGES, STL, OBJ, IFC).
+### 5.2.1: CI/CD Pipeline Configuration
+- [x] Configure GitHub Actions workflow for linting, type-checking, Vitest suite, and WASM build validation.
+- [x] Set up edge deployment pipeline (Vercel / Cloudflare Pages) with custom COOP/COEP headers.
 
-### 5.1.2: Memory Leak & WASM Heap Audit
-- [x] Implement automated test script to load, render, and clear 50 models sequentially while tracking WebGL texture/geometry memory and WASM heap size.
-- [x] Implement explicit browser memory limit warnings and mobile GPU downsampling triggers.
+### 5.2.2: PWA & Offline Support
+- [x] Configure Service Worker (`vite-plugin-pwa`) to cache application shell, icons, and WASM binaries for offline viewing.
+- [x] Add PWA manifest file for desktop and mobile installability.
 
 ## Testing Process
-- Run full Vitest suite (`npm run test:run`) covering matrix math, loaders, exporters, and UI components.
-- Execute Playwright WebGL visual regression test suite (`npx playwright test`).
-- Execute automated memory leak profiling script to assert heap stabilization.
+- Run `npm run test:run` as part of CI step before build step.
+- Verify Service Worker register and offline cache fallback handlers in PWA unit tests.
 
 ## Acceptance Criteria
-- [x] `npm run test:run` passes 100% of unit and integration test suites.
-- [x] All Vitest unit tests and Playwright WebGL end-to-end tests pass.
-- [x] Memory profiler confirms zero residual WebGL geometries/textures or WASM heap memory leaks after scene cleanup.
+- [x] CI pipeline executes `npm run test:run` and requires 100% test pass before deployment.
+- [x] Every Pull Request triggers automated linting, testing, and preview deployments.
+- [x] Application installs as a desktop/mobile PWA and loads converted CAD models without an active internet connection.
 
