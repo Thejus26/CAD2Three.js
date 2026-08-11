@@ -4,25 +4,51 @@ import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Grid, GizmoHelper, GizmoViewport } from '@react-three/drei';
 import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 import { CameraControlsToolbar } from './CameraControls';
-import { PRESET_POSITIONS, type CameraPreset } from './cameraPresetConstants';
+import { getPresetPosition, DEFAULT_CAMERA_DISTANCE, type CameraPreset } from './cameraPresetConstants';
 import { applyZoomStep, MIN_ZOOM_DISTANCE, MAX_ZOOM_DISTANCE } from './zoomControls';
 
 export interface ViewportCanvasProps {
   children?: React.ReactNode;
   onFitToScreen?: () => void;
+  /** Called once when the OrbitControls instance mounts inside the Canvas. */
+  onControlsReady?: (controls: OrbitControlsImpl) => void;
+  /** Current autoscale distance — drives preset scaling and grid fade. */
+  autoScaleDistance?: number;
+  /** Autoscale center point for preset camera targeting. */
+  autoScaleCenter?: [number, number, number];
 }
 
-export const ViewportCanvas: React.FC<ViewportCanvasProps> = ({ children, onFitToScreen }) => {
+export const ViewportCanvas: React.FC<ViewportCanvasProps> = ({
+  children,
+  onFitToScreen,
+  onControlsReady,
+  autoScaleDistance,
+  autoScaleCenter,
+}) => {
   const [activePreset, setActivePreset] = React.useState<CameraPreset>('ISO');
   const controlsRef = React.useRef<OrbitControlsImpl>(null);
 
+  // Callback ref to capture OrbitControls and notify parent
+  const handleControlsRef = React.useCallback(
+    (instance: OrbitControlsImpl | null) => {
+      (controlsRef as React.MutableRefObject<OrbitControlsImpl | null>).current = instance;
+      if (instance && onControlsReady) {
+        onControlsReady(instance);
+      }
+    },
+    [onControlsReady],
+  );
+
+  const effectiveDistance = autoScaleDistance ?? DEFAULT_CAMERA_DISTANCE;
+  const effectiveCenter: [number, number, number] = autoScaleCenter ?? [0, 0, 0];
+
   const handleSelectPreset = (preset: CameraPreset) => {
     setActivePreset(preset);
-    const targetPos = PRESET_POSITIONS[preset];
     if (controlsRef.current) {
       const camera = controlsRef.current.object;
+      const targetPos = getPresetPosition(preset, effectiveDistance, effectiveCenter);
       camera.position.set(...targetPos);
-      controlsRef.current.target.set(0, 0, 0);
+      controlsRef.current.target.set(...effectiveCenter);
       controlsRef.current.update();
     }
   };
@@ -65,6 +91,11 @@ export const ViewportCanvas: React.FC<ViewportCanvasProps> = ({ children, onFitT
     }
   };
 
+  // Dynamic grid fade: scale to the autoscale distance so grid stays visible
+  const gridFadeDistance = Math.max(30, effectiveDistance * 3);
+  const gridCellSize = Math.max(1, Math.pow(10, Math.floor(Math.log10(effectiveDistance)) - 1));
+  const gridSectionSize = gridCellSize * 5;
+
   return (
     <div
       data-testid="viewport-container"
@@ -80,7 +111,7 @@ export const ViewportCanvas: React.FC<ViewportCanvasProps> = ({ children, onFitT
       <Canvas
         shadows
         gl={{ localClippingEnabled: true }}
-        camera={{ position: PRESET_POSITIONS.ISO, fov: 50 }}
+        camera={{ position: getPresetPosition('ISO'), fov: 50 }}
         style={{ width: '100%', height: '100%' }}
       >
         {/* Lights */}
@@ -97,17 +128,17 @@ export const ViewportCanvas: React.FC<ViewportCanvasProps> = ({ children, onFitT
         {/* Dynamic Fading Ground Grid */}
         <Grid
           infiniteGrid
-          fadeDistance={30}
+          fadeDistance={gridFadeDistance}
           fadeStrength={1.5}
-          cellSize={1}
-          sectionSize={5}
+          cellSize={gridCellSize}
+          sectionSize={gridSectionSize}
           cellColor="#45475a"
           sectionColor="#89b4fa"
         />
 
         {/* Orbit Controls */}
         <OrbitControls
-          ref={controlsRef}
+          ref={handleControlsRef}
           makeDefault
           enableDamping
           dampingFactor={0.05}

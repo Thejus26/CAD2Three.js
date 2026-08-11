@@ -15,7 +15,7 @@ import {
 import { createClippingPlanes, INITIAL_CLIPPING_STATE, type ClippingPlanesState } from '@/utils/clippingPlanes';
 import type { AssemblyNode } from '@/components/assembly/assemblyUtils';
 import { calculateMeshProperties, type MeshProperties } from '@/utils/meshProperties';
-import { STLLoaderService, OBJLoaderService, fitCameraToSelection } from '@/services/loaders';
+import { STLLoaderService, OBJLoaderService, fitCameraToSelection, type FitCameraResult } from '@/services/loaders';
 import { STEPLoaderService } from '@/services/stepLoader';
 import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 import './App.css';
@@ -54,8 +54,14 @@ export function App() {
   });
 
   const meshRef = React.useRef<THREE.Mesh>(null);
-  const cameraRef = React.useRef<THREE.PerspectiveCamera>(null);
   const controlsRef = React.useRef<OrbitControlsImpl>(null);
+  const [autoScaleDistance, setAutoScaleDistance] = React.useState<number>(8);
+  const [autoScaleCenter, setAutoScaleCenter] = React.useState<[number, number, number]>([0, 0, 0]);
+
+  /** Callback from ViewportCanvas when OrbitControls mounts. */
+  const handleControlsReady = React.useCallback((controls: OrbitControlsImpl) => {
+    controlsRef.current = controls;
+  }, []);
 
   const activeClippingPlanes = React.useMemo(() => createClippingPlanes(clippingState), [clippingState]);
 
@@ -135,8 +141,11 @@ export function App() {
   };
 
   const handleZoomToFit = React.useCallback(() => {
-    if (meshRef.current && cameraRef.current && controlsRef.current) {
-      fitCameraToSelection(cameraRef.current, controlsRef.current, meshRef.current);
+    if (meshRef.current && controlsRef.current) {
+      const camera = controlsRef.current.object as THREE.PerspectiveCamera;
+      const result: FitCameraResult = fitCameraToSelection(camera, controlsRef.current, meshRef.current);
+      setAutoScaleDistance(result.distance);
+      setAutoScaleCenter([result.center.x, result.center.y, result.center.z]);
     }
   }, []);
 
@@ -252,7 +261,12 @@ export function App() {
             </div>
           )}
 
-          <ViewportCanvas onFitToScreen={handleZoomToFit}>
+          <ViewportCanvas
+            onFitToScreen={handleZoomToFit}
+            onControlsReady={handleControlsReady}
+            autoScaleDistance={autoScaleDistance}
+            autoScaleCenter={autoScaleCenter}
+          >
             {loadedMesh && isMeshVisible ? (
               <mesh
                 ref={meshRef}
