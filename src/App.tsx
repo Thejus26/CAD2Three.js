@@ -5,6 +5,14 @@ import { Dropzone } from '@/components/uploader/Dropzone';
 import { LoadingModal } from '@/components/uploader/LoadingModal';
 import { AssemblyTree } from '@/components/assembly/AssemblyTree';
 import { InspectorPanel, type MaterialState } from '@/components/assembly/InspectorPanel';
+import { PrecisionToolbar } from '@/components/viewport/PrecisionToolbar';
+import {
+  PrecisionToolsOverlay,
+  type ToolMode,
+  type DistanceMeasurement,
+  type AngleMeasurement,
+} from '@/components/viewport/PrecisionToolsOverlay';
+import { createClippingPlanes, INITIAL_CLIPPING_STATE, type ClippingPlanesState } from '@/utils/clippingPlanes';
 import type { AssemblyNode } from '@/components/assembly/assemblyUtils';
 import { calculateMeshProperties, type MeshProperties } from '@/utils/meshProperties';
 import { STLLoaderService, OBJLoaderService, fitCameraToSelection } from '@/services/loaders';
@@ -24,6 +32,12 @@ export function App() {
   const [loadingProgress, setLoadingProgress] = React.useState<number>(0);
   const [toastMessage, setToastMessage] = React.useState<string | null>(null);
 
+  // Precision 3D Measurement & Clipping Tool states
+  const [toolMode, setToolMode] = React.useState<ToolMode>('none');
+  const [distances, setDistances] = React.useState<DistanceMeasurement[]>([]);
+  const [angles, setAngles] = React.useState<AngleMeasurement[]>([]);
+  const [clippingState, setClippingState] = React.useState<ClippingPlanesState>(INITIAL_CLIPPING_STATE);
+
   // Assembly & Inspector states
   const [assemblyNodes, setAssemblyNodes] = React.useState<AssemblyNode[]>([]);
   const [selectedId, setSelectedId] = React.useState<string | null>(null);
@@ -41,6 +55,8 @@ export function App() {
   const meshRef = React.useRef<THREE.Mesh>(null);
   const cameraRef = React.useRef<THREE.PerspectiveCamera>(null);
   const controlsRef = React.useRef<OrbitControlsImpl>(null);
+
+  const activeClippingPlanes = React.useMemo(() => createClippingPlanes(clippingState), [clippingState]);
 
   React.useEffect(() => {
     const worker = new Worker(new URL('@/workers/test.worker.ts', import.meta.url), {
@@ -166,7 +182,7 @@ export function App() {
           zIndex: 5,
         }}
       >
-        <h1 style={{ margin: 0, fontSize: '1.25rem' }}>CAD2Three.js Assembly Inspector</h1>
+        <h1 style={{ margin: 0, fontSize: '1.25rem' }}>CAD2Three.js Assembly Inspector & Precision Tools</h1>
         <p style={{ margin: 0, fontSize: '0.85rem', color: '#a6adc8' }}>
           Worker: <strong>{workerMsg}</strong>
         </p>
@@ -187,6 +203,19 @@ export function App() {
         <div style={{ flex: 1, position: 'relative' }}>
           <Dropzone onFileLoaded={handleFileLoaded} onError={showToast} />
           <LoadingModal isOpen={isLoading} filename={loadingFilename} progress={loadingProgress} />
+
+          <PrecisionToolbar
+            toolMode={toolMode}
+            onSetToolMode={setToolMode}
+            distances={distances}
+            angles={angles}
+            onClearMeasurements={() => {
+              setDistances([]);
+              setAngles([]);
+            }}
+            clippingState={clippingState}
+            onClippingChange={setClippingState}
+          />
 
           {/* Toast Banner */}
           {toastMessage && (
@@ -218,8 +247,10 @@ export function App() {
                 castShadow
                 receiveShadow
                 onClick={(e) => {
-                  e.stopPropagation();
-                  setSelectedId('node-1');
+                  if (toolMode === 'none') {
+                    e.stopPropagation();
+                    setSelectedId('node-1');
+                  }
                 }}
               >
                 <meshStandardMaterial
@@ -229,14 +260,37 @@ export function App() {
                   opacity={meshOpacity}
                   transparent={meshOpacity < 1.0}
                   wireframe={material.wireframe}
+                  clippingPlanes={activeClippingPlanes}
+                  clipShadows
                 />
               </mesh>
             ) : !loadedMesh ? (
-              <mesh castShadow receiveShadow onClick={() => setSelectedId(null)}>
+              <mesh
+                ref={meshRef}
+                castShadow
+                receiveShadow
+                onClick={() => {
+                  if (toolMode === 'none') setSelectedId(null);
+                }}
+              >
                 <boxGeometry args={[1.5, 1.5, 1.5]} />
-                <meshStandardMaterial color="#45475a" roughness={0.5} />
+                <meshStandardMaterial
+                  color="#45475a"
+                  roughness={0.5}
+                  clippingPlanes={activeClippingPlanes}
+                  clipShadows
+                />
               </mesh>
             ) : null}
+
+            <PrecisionToolsOverlay
+              toolMode={toolMode}
+              targetMesh={meshRef.current}
+              distances={distances}
+              angles={angles}
+              onAddDistance={(d) => setDistances((prev) => [...prev, d])}
+              onAddAngle={(a) => setAngles((prev) => [...prev, a])}
+            />
           </ViewportCanvas>
         </div>
 
