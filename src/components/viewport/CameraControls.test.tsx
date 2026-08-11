@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { CameraControlsToolbar } from './CameraControls';
-import { PRESET_POSITIONS, type CameraPreset } from './cameraPresetConstants';
+import { PRESET_DIRECTIONS, getPresetPosition, type CameraPreset } from './cameraPresetConstants';
 
 describe('CameraControlsToolbar Component', () => {
   it('renders all preset buttons', () => {
@@ -23,14 +23,26 @@ describe('CameraControlsToolbar Component', () => {
     expect(handleSelect).toHaveBeenCalledWith('TOP');
   });
 
-  it('defines valid 3D coordinates for all camera presets', () => {
+  it('defines valid unit direction vectors for all camera presets', () => {
     const presets: CameraPreset[] = ['ISO', 'TOP', 'FRONT', 'BACK', 'LEFT', 'RIGHT'];
     presets.forEach((preset) => {
-      const pos = PRESET_POSITIONS[preset];
-      expect(pos).toHaveLength(3);
-      expect(typeof pos[0]).toBe('number');
-      expect(typeof pos[1]).toBe('number');
-      expect(typeof pos[2]).toBe('number');
+      const dir = PRESET_DIRECTIONS[preset];
+      expect(dir).toHaveLength(3);
+      expect(typeof dir[0]).toBe('number');
+      expect(typeof dir[1]).toBe('number');
+      expect(typeof dir[2]).toBe('number');
     });
+  });
+
+  it('scales preset positions correctly by distance', () => {
+    const pos = getPresetPosition('FRONT', 100);
+    expect(pos[0]).toBeCloseTo(0);
+    expect(pos[1]).toBeCloseTo(0);
+    expect(pos[2]).toBeCloseTo(100);
+
+    const posCenter = getPresetPosition('FRONT', 50, [10, 20, 30]);
+    expect(posCenter[0]).toBeCloseTo(10);
+    expect(posCenter[1]).toBeCloseTo(20);
+    expect(posCenter[2]).toBeCloseTo(80);
   });
 });

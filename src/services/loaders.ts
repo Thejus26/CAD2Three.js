@@ -69,12 +69,17 @@ export class OBJLoaderService {
   }
 }
 
+export interface FitCameraResult {
+  distance: number;
+  center: THREE.Vector3;
+}
+
 export const fitCameraToSelection = (
   camera: THREE.PerspectiveCamera | THREE.OrthographicCamera,
   controls: { target: THREE.Vector3; update: () => void },
   object: THREE.Object3D,
   offset = 1.6
-) => {
+): FitCameraResult => {
   const boundingBox = new THREE.Box3().setFromObject(object);
   const fov = (camera as THREE.PerspectiveCamera).fov || 50;
   const aspect = (camera as THREE.PerspectiveCamera).aspect || 1.0;
@@ -86,9 +91,11 @@ export const fitCameraToSelection = (
     offsetFactor: offset,
   });
 
-  // Adjust camera far clipping plane dynamically so large CAD models are never clipped
+  // Adjust near and far clipping planes dynamically so large CAD models
+  // are never clipped and small models don't suffer z-fighting.
   if ((camera as THREE.PerspectiveCamera).isPerspectiveCamera) {
     const perspCam = camera as THREE.PerspectiveCamera;
+    perspCam.near = Math.max(0.01, Math.min(10, distance * 0.001));
     perspCam.far = Math.max(10000, distance * 10);
     perspCam.updateProjectionMatrix();
   }
@@ -97,4 +104,6 @@ export const fitCameraToSelection = (
   camera.lookAt(center);
   controls.target.copy(center);
   controls.update();
+
+  return { distance, center };
 };
