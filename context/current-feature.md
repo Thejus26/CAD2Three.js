@@ -1,19 +1,28 @@
-# Milestone 3.1: Architectural BIM (IFC) Integration
+# Milestone 3.2: Mesh Compression & glTF/GLB Exporter Pipeline
 
 ## Overview
-Integrate `web-ifc` WebAssembly engine for parsing architectural and structural IFC files into Three.js geometries.
+Develop a client-side mesh optimization, Draco compression, and glTF 2.0 export pipeline with local IndexedDB caching.
 
 ## Sub-tasks
 
-### 3.1.1: Web-IFC WASM Reader Integration
-- [ ] Set up `web-ifc` WASM module inside a dedicated BIM Web Worker.
-- [ ] Parse IFC entity geometry while extracting ExpressIDs, element classifications (Walls, Doors, Slabs, Beams), and material properties.
+### 3.2.1: glTF 2.0 / GLB Serialization
+- [ ] Integrate Three.js `GLTFExporter`.
+- [ ] Build exporter service supporting binary `.glb` download and embedded `.gltf`.
+
+### 3.2.2: Mesh Simplification & Draco Compression
+- [ ] Integrate `Draco3D` compressor for vertex/normal buffer quantization.
+- [ ] Integrate `gltf-transform` / `meshoptimizer` for mesh decimation (LOD) and hardware instancing (`InstancedMesh`).
+
+### 3.2.3: Local Caching Infrastructure
+- [ ] Implement `IndexedDB` storage service using SHA-256 model file hashes to cache converted GLB buffers for instant subsequent loads.
 
 ## Testing Process
-- Test IFC entity classification filter logic and ExpressID property lookup functions in `src/services/ifcParser.test.ts`.
-- Run `npm run test:run` to execute IFC metadata parser tests.
+- Test GLB export buffer serializer in `src/services/gltfExporter.test.ts`.
+- Unit test IndexedDB hashing and cache retrieval logic in `src/services/cacheService.test.ts`.
+- Run `npm run test:run` to execute compression and cache unit tests.
 
 ## Acceptance Criteria
-- [ ] `npm run test:run` passes unit tests for IFC metadata property parsing and element classification.
-- [ ] Architectural `.ifc` files parse and render in WebGL with correct spatial orientation.
-- [ ] Structural IFC hierarchy and element metadata are preserved.
+- [ ] `npm run test:run` passes unit tests for glTF serialization and IndexedDB hashing/caching services.
+- [ ] User can export converted CAD scenes as compressed `.glb` files.
+- [ ] Draco compression reduces file payload size by 70–80%.
+- [ ] Previously loaded CAD files open instantly from IndexedDB cache.
