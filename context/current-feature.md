@@ -1,24 +1,29 @@
-# Milestone 2.1: OpenCascade.js WASM Module & Worker Integration
+# Milestone 2.2: STEP & IGES Parsing & B-Rep Tessellation Engine
 
 ## Overview
-Set up OpenCascade.js WebAssembly build and establish off-thread Web Worker architecture for heavy CAD file parsing.
+Develop the OpenCascade WASM parsing pipeline for STEP and IGES files, converting B-Rep CAD geometry into Three.js triangulated meshes while retaining assembly hierarchy and color data.
 
 ## Sub-tasks
 
-### 2.1.1: OpenCascade WASM Build & Asset Configuration
-- [ ] Configure custom `opencascade.js` WASM package containing STEP, IGES, BRep, and StlAPI modules.
-- [ ] Configure Vite server response headers for `SharedArrayBuffer` support (`Cross-Origin-Opener-Policy` and `Cross-Origin-Embedder-Policy`).
+### 2.2.1: STEP / IGES Reader Module
+- [ ] Bind `STEPControl_Reader` and `IGESControl_Reader` in the OpenCascade worker wrapper.
+- [ ] Traverse CAD shape tree topology (Extract Compounds, Sub-shapes, and Part labels).
 
-### 2.1.2: Web Worker Off-Thread Architecture
-- [ ] Implement `cadWorker.worker.ts` for off-thread CAD processing.
-- [ ] Implement `comlink` or ArrayBuffer transferrable messaging protocol between main UI thread and CAD worker.
+### 2.2.2: B-Rep Mesh Generator
+- [ ] Implement `BRepMesh_IncrementalMesh` tessellation algorithm.
+- [ ] Add linear and angular deflection quality controls (`Deflection: 0.001mm` to `1.0mm`).
+- [ ] Extract vertex buffers (positions, normals, triangle indices) and CAD RGB colors (`XCAFDoc_ColorTool`).
+
+### 2.2.3: Native WASM Memory Cleanup
+- [ ] Implement garbage collection cleanup logic to call native C++ `.delete()` on OpenCascade C++ handles after mesh extraction to prevent heap memory exhaustion.
 
 ## Testing Process
-- Mock Web Worker messaging in `src/workers/cadWorker.test.ts` to test worker initialization, message serialization, and transferrable ArrayBuffer handling.
-- Verify COOP/COEP header configuration via dev server integration test.
-- Run `npm run test:run` to confirm worker messaging tests pass.
+- Test deflection quality slider calculation and parameter sanitization in `src/services/tessellation.test.ts`.
+- Unit test vertex buffer conversion functions and C++ memory handle disposal triggers in `src/services/occMemory.test.ts`.
+- Run `npm run test:run` to verify tessellation helper tests pass.
 
 ## Acceptance Criteria
-- [ ] `npm run test:run` passes unit tests for CAD worker message passing and memory transfer protocols.
-- [ ] OpenCascade WASM loads cleanly inside Web Worker without blocking main UI thread.
-- [ ] SharedArrayBuffer / transferrable buffers transfer file byte data instantly.
+- [ ] `npm run test:run` passes unit tests for deflection math and native memory disposal handlers.
+- [ ] STEP (`.stp`, `.step`) and IGES (`.igs`, `.iges`) files parse and tessellate without UI freeze.
+- [ ] Assembly tree hierarchy and original CAD colors display accurately in Three.js viewport.
+- [ ] Zero native C++ heap memory leaks detected after processing multiple models.
