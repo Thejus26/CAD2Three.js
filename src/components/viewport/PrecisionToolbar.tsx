@@ -10,6 +10,7 @@ interface PrecisionToolbarProps {
   onClearMeasurements: () => void;
   clippingState: ClippingPlanesState;
   onClippingChange: (state: ClippingPlanesState) => void;
+  onZoomToFit?: () => void;
 }
 
 export const PrecisionToolbar: React.FC<PrecisionToolbarProps> = ({
@@ -20,6 +21,7 @@ export const PrecisionToolbar: React.FC<PrecisionToolbarProps> = ({
   onClearMeasurements,
   clippingState,
   onClippingChange,
+  onZoomToFit,
 }) => {
   const [showSectionPanel, setShowSectionPanel] = React.useState(false);
 
@@ -48,6 +50,24 @@ export const PrecisionToolbar: React.FC<PrecisionToolbarProps> = ({
           border: '1px solid rgba(255, 255, 255, 0.1)',
         }}
       >
+        {onZoomToFit && (
+          <button
+            onClick={onZoomToFit}
+            style={{
+              background: '#313244',
+              color: '#cdd6f4',
+              border: 'none',
+              padding: '6px 12px',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              fontWeight: 600,
+              fontSize: '12px',
+            }}
+            title="Zoom to Fit / Re-frame auto scale view"
+          >
+            🔍 Zoom to Fit
+          </button>
+        )}
         <button
           onClick={() => onSetToolMode(toolMode === 'distance' ? 'none' : 'distance')}
           style={{

@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { STLLoader } from 'three-stdlib';
 import { OBJLoader } from 'three-stdlib';
+import { calculateAutoScale } from '@/utils/autoScaleMath';
 
 export interface ParsedMeshResult {
   geometry: THREE.BufferGeometry;
@@ -75,18 +76,17 @@ export const fitCameraToSelection = (
   offset = 1.4
 ) => {
   const boundingBox = new THREE.Box3().setFromObject(object);
-  const center = boundingBox.getCenter(new THREE.Vector3());
-  const size = boundingBox.getSize(new THREE.Vector3());
+  const fov = (camera as THREE.PerspectiveCamera).fov || 50;
+  const aspect = (camera as THREE.PerspectiveCamera).aspect || 1.0;
 
-  const maxDim = Math.max(size.x, size.y, size.z);
-  const fov = (camera as THREE.PerspectiveCamera).fov * (Math.PI / 180);
-  let cameraZ = Math.abs((maxDim / 2) / Math.tan(fov / 2)) * offset;
+  const { center, cameraPosition } = calculateAutoScale({
+    boundingBox,
+    fov,
+    aspectRatio: aspect,
+    offsetFactor: offset,
+  });
 
-  if (isNaN(cameraZ) || cameraZ === 0) {
-    cameraZ = 10;
-  }
-
-  camera.position.set(center.x + cameraZ * 0.7, center.y + cameraZ * 0.7, center.z + cameraZ * 0.7);
+  camera.position.copy(cameraPosition);
   camera.lookAt(center);
   controls.target.copy(center);
   controls.update();
