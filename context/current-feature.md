@@ -1,27 +1,25 @@
-# Milestone 4.2: 3D Precision Tools (Measurement & Clipping)
+# Milestone 5.1: Quality Assurance, Automated Testing & Memory Auditing
 
 ## Overview
-Implement 3D CAD measurement tools (distance, angles, bounding dimensions) and dynamic cross-section clipping planes.
+Establish automated testing infrastructure, WebGL rendering regression tests, and comprehensive WASM memory leak auditing.
 
 ## Sub-tasks
 
-### 4.2.1: Interactive Measurement Tool
-- [x] Implement Raycasting vertex/edge snapping helper.
-- [x] Build Point-to-Point distance measurement tool with 3D line overlays and HTML annotation labels.
-- [x] Implement 3-point angle measurement tool.
+### 5.1.1: Automated Unit & Integration Tests
+- [x] Implement unit tests (Vitest) for matrix transformations, CAD deflection converters, and glTF metadata exporters.
+- [x] Set up Playwright WebGL visual regression testing against standard benchmark CAD models (STEP, IGES, STL, OBJ, IFC).
 
-### 4.2.2: Dynamic Sectioning / Clipping Planes
-- [x] Implement X, Y, Z axis clipping planes using WebGL local clipping planes.
-- [x] Build interactive 3D transform gizmo handles for sliding and rotating clipping planes.
-- [x] Render solid stencil caps over cut geometry faces.
+### 5.1.2: Memory Leak & WASM Heap Audit
+- [x] Implement automated test script to load, render, and clear 50 models sequentially while tracking WebGL texture/geometry memory and WASM heap size.
+- [x] Implement explicit browser memory limit warnings and mobile GPU downsampling triggers.
 
 ## Testing Process
-- Unit test 3D distance and angle calculation math helpers in `src/utils/measurementMath.test.ts`.
-- Test clipping plane normal and constant offset calculation handlers in `src/utils/clippingPlanes.test.ts`.
-- Run `npm run test:run` to execute 3D tool math unit tests.
+- Run full Vitest suite (`npm run test:run`) covering matrix math, loaders, exporters, and UI components.
+- Execute Playwright WebGL visual regression test suite (`npx playwright test`).
+- Execute automated memory leak profiling script to assert heap stabilization.
 
 ## Acceptance Criteria
-- [x] `npm run test:run` passes unit tests for measurement math and clipping plane transformations.
-- [x] Distance measurements snap accurately to mesh vertices with < 0.01mm tolerance.
-- [x] Cross-sectioning clips the model smoothly in real-time with solid stencil caps.
+- [x] `npm run test:run` passes 100% of unit and integration test suites.
+- [x] All Vitest unit tests and Playwright WebGL end-to-end tests pass.
+- [x] Memory profiler confirms zero residual WebGL geometries/textures or WASM heap memory leaks after scene cleanup.
 
