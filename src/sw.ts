@@ -1,3 +1,7 @@
+/// <reference lib="webworker" />
+
+declare const self: ServiceWorkerGlobalScope;
+
 const CACHE_NAME = 'cad2threejs-v1';
 const ASSETS = [
   '/',
@@ -5,16 +9,16 @@ const ASSETS = [
   '/manifest.json',
 ];
 
-self.addEventListener('install', (event: any) => {
+self.addEventListener('install', (event: ExtendableEvent) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll(ASSETS);
     })
   );
-  (self as any).skipWaiting();
+  self.skipWaiting();
 });
 
-self.addEventListener('activate', (event: any) => {
+self.addEventListener('activate', (event: ExtendableEvent) => {
   event.waitUntil(
     caches.keys().then((keys) => {
       return Promise.all(
@@ -22,10 +26,10 @@ self.addEventListener('activate', (event: any) => {
       );
     })
   );
-  (self as any).clients.claim();
+  self.clients.claim();
 });
 
-self.addEventListener('fetch', (event: any) => {
+self.addEventListener('fetch', (event: FetchEvent) => {
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
       if (cachedResponse) {

@@ -22,7 +22,7 @@ export interface AngleMeasurement {
 
 interface PrecisionToolsOverlayProps {
   toolMode: ToolMode;
-  targetMesh?: THREE.Mesh | null;
+  targetMeshRef?: React.RefObject<THREE.Mesh | null>;
   distances: DistanceMeasurement[];
   angles: AngleMeasurement[];
   onAddDistance: (measurement: DistanceMeasurement) => void;
@@ -31,7 +31,7 @@ interface PrecisionToolsOverlayProps {
 
 export const PrecisionToolsOverlay: React.FC<PrecisionToolsOverlayProps> = ({
   toolMode,
-  targetMesh,
+  targetMeshRef,
   distances,
   angles,
   onAddDistance,
@@ -40,16 +40,11 @@ export const PrecisionToolsOverlay: React.FC<PrecisionToolsOverlayProps> = ({
   const [activePoints, setActivePoints] = React.useState<THREE.Vector3[]>([]);
   const [hoverPoint, setHoverPoint] = React.useState<THREE.Vector3 | null>(null);
 
-  // Clear pending points when mode changes
-  React.useEffect(() => {
-    setActivePoints([]);
-    setHoverPoint(null);
-  }, [toolMode]);
-
-  const handlePointerMove = (e: any) => {
+  const handlePointerMove = (e: { stopPropagation: () => void; point: THREE.Vector3 }) => {
     if (toolMode === 'none') return;
     e.stopPropagation();
-    const rawHit = e.point as THREE.Vector3;
+    const rawHit = e.point;
+    const targetMesh = targetMeshRef?.current;
     if (targetMesh && targetMesh.geometry) {
       const snapped = findNearestVertex(targetMesh.geometry, rawHit, targetMesh.matrixWorld);
       setHoverPoint(snapped);
@@ -58,10 +53,11 @@ export const PrecisionToolsOverlay: React.FC<PrecisionToolsOverlayProps> = ({
     }
   };
 
-  const handlePointerDown = (e: any) => {
+  const handlePointerDown = (e: { stopPropagation: () => void; point: THREE.Vector3 }) => {
     if (toolMode === 'none') return;
     e.stopPropagation();
-    const rawHit = e.point as THREE.Vector3;
+    const rawHit = e.point;
+    const targetMesh = targetMeshRef?.current;
     const pt = targetMesh && targetMesh.geometry
       ? findNearestVertex(targetMesh.geometry, rawHit, targetMesh.matrixWorld)
       : rawHit;

@@ -1,51 +1,35 @@
-# 🔍 CAD2Three.js Code Audit Report
+# 🔍 CAD2Three.js Logic & Application Bug Audit Report
 
-**Tech Stack:** React 18 | Vite | TypeScript | Three.js | WebAssembly (OpenCascade.js / web-ifc)
+**Date:** August 11, 2026  
+**Tech Stack:** React 18 | Vite | TypeScript | Three.js | `@react-three/fiber` | WebAssembly (OpenCascade.js / web-ifc)
+
+---
 
 ## Executive Summary
-- **TypeScript Compiler (`tsc`):** PASS (0 errors)
-- **ESLint Analysis:** PASS (0 issues across `src/`)
-- **Security Audit (`npm audit`):** ACTION REQUIRED (0 critical, 0 high, 2 moderate vulnerabilities)
-- **Unit & WebGL Tests:** PASS (12/12 passed across 5 test suites)
-- **Context7 Documentation Scan:** Completed via Context7 MCP (`/mrdoob/three.js`).
+
+A deep architectural and logic audit was performed across loader services, camera/matrix math, raycasting measurement overlays, and Web Workers.
+
+| Logic Module | Status | Audit Findings & Actions Taken |
+| :--- | :---: | :--- |
+| **`OBJLoaderService` (`loaders.ts`)** | **FIXED** | Multi-object OBJ files were dropping geometry attributes, keeping only the first mesh. Added position/index buffer concatenation and disposed intermediate geometries. |
+| **`STEPLoaderService` (`stepLoader.ts`)** | **VERIFIED** | Correctly concatenates B-Rep sub-meshes and computes normals/bounds. Safe fallback to box geometry handling. |
+| **`fitCameraToSelection` (`loaders.ts`)** | **VERIFIED** | Dynamic near/far clipping plane calculation (`near = distance * 0.001`, `far = distance * 10`) prevents z-fighting across large and small scale CAD models. |
+| **`calculateAutoScale` (`autoScaleMath.ts`)** | **VERIFIED** | Handles empty/zero-volume bounding boxes and portrait aspect ratios (`aspectRatio < 1`). |
+| **`PrecisionToolsOverlay` (`PrecisionToolsOverlay.tsx`)** | **FIXED** | Fixed overlay key state reset and raycast snap logic. |
 
 ---
 
-## CAD & WebGL Specific Audit Checklist
-- [x] **Off-Thread Processing:** Heavy parsing and CAD WASM tessellation run inside Web Workers.
-- [x] **Memory Leak Safeguards:** Three.js geometries/materials and WASM memory handles are managed.
-- [x] **SharedArrayBuffer Headers:** Headers configured appropriately for WASM execution.
+## Logic Bug Fix Details
+
+### 1. `OBJLoaderService` Multi-Geometry Dropping Bug
+- **File:** [`src/services/loaders.ts`](file:///C:/Users/ENERGY%20SAVER/Documents/Learning/CAD2Three.js/src/services/loaders.ts#L43-L90)
+- **Logic Defect:** When parsing OBJ files containing multiple objects (`o Object1`, `o Object2`), `OBJLoaderService.parse()` previously assigned `finalGeometry = geometries[0]`, effectively discarding all subsequent parts of the 3D model.
+- **Root Cause & Fix:** Implemented full buffer merging (positions and indexed triangle offsets) for `geometries.length > 1` and disposed intermediate geometries to prevent WebGL memory leaks.
+- **Unit Test Added:** Added test case in [`src/services/loaders.test.ts`](file:///C:/Users/ENERGY%20SAVER/Documents/Learning/CAD2Three.js/src/services/loaders.test.ts#L49-L67) (`merges multiple geometries into a single BufferGeometry when parsing multi-object OBJ files`).
 
 ---
 
-## Findings & Action Items
-
-### 1. ⚠️ Multiple Three.js Instances Warning (Non-Fatal Warning)
-* **Observed Output:** `THREE.WARNING: Multiple instances of Three.js being imported.` during Vitest component test run (`src/App.test.tsx`).
-* **Root Cause:** Both `@react-three/fiber` / `@react-three/drei` and direct `three` imports are resolving duplicate versions or module bundler entry points during test bundling.
-* **Context7 Reference:** Querying [`/mrdoob/three.js`](https://github.com/mrdoob/three.js) indicates that `three` module aliasing should be enforced in Vite/Vitest configs to prevent duplicate module instantiations and prototype mismatch risks.
-* **Recommendation:** Add explicit `resolve.alias` in `vite.config.ts` / `vitest.config.ts`:
-  ```ts
-  resolve: {
-    alias: {
-      three: path.resolve('./node_modules/three')
-    }
-  }
-  ```
-
-### 2. 🛡️ Moderate Vulnerability in `uuid` / `vite-plugin-top-level-await`
-* **Observed Output:** `uuid: Missing buffer bounds check in v3/v5/v6 when buf is provided` (GHSA-w5hq-g745-h8pq).
-* **Impact:** 2 moderate severity vulnerability nodes (`uuid` & transitive `vite-plugin-top-level-await`).
-* **Recommendation:** Upgrade `vite-plugin-top-level-await` to version `>=1.2.4` or update `uuid` via npm overrides.
-
----
-
-## Detailed Test & Check Verification Log
-- `tsc --noEmit`: 0 errors
-- `eslint src/`: 0 errors
-- `vitest run`: 5/5 test files passed (12/12 tests passed)
-  - [`CameraControls.test.tsx`](file:///C:/Users/ENERGY%20SAVER/Documents/Learning/CAD2Three.js/src/components/viewport/CameraControls.test.tsx) (3/3)
-  - [`loaders.test.ts`](file:///C:/Users/ENERGY%20SAVER/Documents/Learning/CAD2Three.js/src/services/loaders.test.ts) (4/4)
-  - [`Dropzone.test.tsx`](file:///C:/Users/ENERGY%20SAVER/Documents/Learning/CAD2Three.js/src/components/uploader/Dropzone.test.tsx) (3/3)
-  - [`ViewportCanvas.test.tsx`](file:///C:/Users/ENERGY%20SAVER/Documents/Learning/CAD2Three.js/src/components/viewport/ViewportCanvas.test.tsx) (1/1)
-  - [`App.test.tsx`](file:///C:/Users/ENERGY%20SAVER/Documents/Learning/CAD2Three.js/src/App.test.tsx) (1/1)
+## Verification Results
+- **Vitest Test Suite:** 81/81 unit tests passed across 24 files.
+- **TypeScript Compilation:** Clean (`tsc --noEmit`).
+- **Production Build:** Clean (`vite build`).

@@ -311,8 +311,9 @@ export function App() {
             ) : null}
 
             <PrecisionToolsOverlay
+              key={toolMode}
               toolMode={toolMode}
-              targetMesh={meshRef.current}
+              targetMeshRef={meshRef}
               distances={distances}
               angles={angles}
               onAddDistance={(d) => setDistances((prev) => [...prev, d])}

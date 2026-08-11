@@ -56,7 +56,34 @@ export class OBJLoaderService {
       finalGeometry = geometries[0];
     } else if (geometries.length > 1) {
       // Merge multiple geometries into one for display
-      finalGeometry = geometries[0];
+      const totalPositions: number[] = [];
+      const totalIndices: number[] = [];
+      let indexOffset = 0;
+
+      for (const g of geometries) {
+        const pos = g.attributes.position.array;
+        for (let i = 0; i < pos.length; i++) {
+          totalPositions.push(pos[i]);
+        }
+
+        if (g.index) {
+          const idx = g.index.array;
+          for (let i = 0; i < idx.length; i++) {
+            totalIndices.push(idx[i] + indexOffset);
+          }
+        } else {
+          for (let i = 0; i < pos.length / 3; i++) {
+            totalIndices.push(i + indexOffset);
+          }
+        }
+
+        indexOffset += pos.length / 3;
+        g.dispose();
+      }
+
+      finalGeometry = new THREE.BufferGeometry();
+      finalGeometry.setAttribute('position', new THREE.Float32BufferAttribute(totalPositions, 3));
+      finalGeometry.setIndex(totalIndices);
     } else {
       finalGeometry = new THREE.BufferGeometry();
     }

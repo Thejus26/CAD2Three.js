@@ -45,6 +45,25 @@ f 1 2 3`;
       expect(result.name).toBe('test.obj');
       expect(result.geometry).toBeInstanceOf(THREE.BufferGeometry);
     });
+
+    it('merges multiple geometries into a single BufferGeometry when parsing multi-object OBJ files', () => {
+      const service = new OBJLoaderService();
+      const multiObjContent = `o Object1
+v 0 0 0
+v 1 0 0
+v 1 1 0
+f 1 2 3
+
+o Object2
+v 2 2 2
+v 3 2 2
+v 3 3 2
+f 1 2 3`;
+
+      const result = service.parse(multiObjContent, 'multi.obj');
+      expect(result.geometry).toBeInstanceOf(THREE.BufferGeometry);
+      expect(result.geometry.attributes.position.count).toBe(6);
+    });
   });
 
   describe('fitCameraToSelection', () => {
