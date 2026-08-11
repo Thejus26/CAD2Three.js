@@ -1,9 +1,11 @@
 import React from 'react';
+import * as THREE from 'three';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Grid, GizmoHelper, GizmoViewport } from '@react-three/drei';
 import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 import { CameraControlsToolbar } from './CameraControls';
 import { PRESET_POSITIONS, type CameraPreset } from './cameraPresetConstants';
+import { applyZoomStep, MIN_ZOOM_DISTANCE, MAX_ZOOM_DISTANCE } from './zoomControls';
 
 export interface ViewportCanvasProps {
   children?: React.ReactNode;
@@ -24,6 +26,37 @@ export const ViewportCanvas: React.FC<ViewportCanvasProps> = ({ children, onFitT
       controlsRef.current.update();
     }
   };
+
+  const handleZoomIn = React.useCallback(() => {
+    if (controlsRef.current) {
+      const camera = controlsRef.current.object as THREE.PerspectiveCamera;
+      applyZoomStep(camera, controlsRef.current, 'in', MIN_ZOOM_DISTANCE, MAX_ZOOM_DISTANCE);
+    }
+  }, []);
+
+  const handleZoomOut = React.useCallback(() => {
+    if (controlsRef.current) {
+      const camera = controlsRef.current.object as THREE.PerspectiveCamera;
+      applyZoomStep(camera, controlsRef.current, 'out', MIN_ZOOM_DISTANCE, MAX_ZOOM_DISTANCE);
+    }
+  }, []);
+
+  // FR-4 Keyboard shortcuts for + and -
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+        return;
+      }
+      if (e.key === '+' || e.key === '=') {
+        handleZoomIn();
+      } else if (e.key === '-' || e.key === '_') {
+        handleZoomOut();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [handleZoomIn, handleZoomOut]);
 
   const handleDoubleClick = () => {
     // Trigger auto-scale framing on background double click
@@ -78,8 +111,8 @@ export const ViewportCanvas: React.FC<ViewportCanvasProps> = ({ children, onFitT
           makeDefault
           enableDamping
           dampingFactor={0.05}
-          minDistance={1}
-          maxDistance={100}
+          minDistance={MIN_ZOOM_DISTANCE}
+          maxDistance={MAX_ZOOM_DISTANCE}
         />
 
         {/* 3D ViewCube / Orientation Gizmo */}
@@ -90,8 +123,13 @@ export const ViewportCanvas: React.FC<ViewportCanvasProps> = ({ children, onFitT
         {children}
       </Canvas>
 
-      {/* Camera Preset Toolbar */}
-      <CameraControlsToolbar onSelectPreset={handleSelectPreset} activePreset={activePreset} />
+      {/* Camera Preset & Zoom Toolbar */}
+      <CameraControlsToolbar
+        onSelectPreset={handleSelectPreset}
+        activePreset={activePreset}
+        onZoomIn={handleZoomIn}
+        onZoomOut={handleZoomOut}
+      />
     </div>
   );
 };

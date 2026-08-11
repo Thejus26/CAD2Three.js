@@ -4,11 +4,15 @@ import type { CameraPreset } from './cameraPresetConstants';
 export interface CameraControlsProps {
   onSelectPreset: (preset: CameraPreset) => void;
   activePreset?: CameraPreset;
+  onZoomIn?: () => void;
+  onZoomOut?: () => void;
 }
 
 export const CameraControlsToolbar: React.FC<CameraControlsProps> = ({
   onSelectPreset,
   activePreset = 'ISO',
+  onZoomIn,
+  onZoomOut,
 }) => {
   const presets: CameraPreset[] = ['ISO', 'TOP', 'FRONT', 'BACK', 'LEFT', 'RIGHT'];
 
@@ -21,6 +25,7 @@ export const CameraControlsToolbar: React.FC<CameraControlsProps> = ({
         left: '50%',
         transform: 'translateX(-50%)',
         display: 'flex',
+        alignItems: 'center',
         gap: '8px',
         background: 'rgba(30, 30, 46, 0.85)',
         backdropFilter: 'blur(8px)',
@@ -31,6 +36,50 @@ export const CameraControlsToolbar: React.FC<CameraControlsProps> = ({
         zIndex: 10,
       }}
     >
+      {onZoomIn && (
+        <button
+          onClick={onZoomIn}
+          title="Zoom In (+)"
+          style={{
+            background: 'transparent',
+            color: '#cdd6f4',
+            border: '1px solid rgba(255, 255, 255, 0.15)',
+            borderRadius: '16px',
+            padding: '6px 10px',
+            fontSize: '0.85rem',
+            fontWeight: 700,
+            cursor: 'pointer',
+            transition: 'all 0.2s ease',
+          }}
+        >
+          ➕
+        </button>
+      )}
+
+      {onZoomOut && (
+        <button
+          onClick={onZoomOut}
+          title="Zoom Out (-)"
+          style={{
+            background: 'transparent',
+            color: '#cdd6f4',
+            border: '1px solid rgba(255, 255, 255, 0.15)',
+            borderRadius: '16px',
+            padding: '6px 10px',
+            fontSize: '0.85rem',
+            fontWeight: 700,
+            cursor: 'pointer',
+            transition: 'all 0.2s ease',
+          }}
+        >
+          ➖
+        </button>
+      )}
+
+      {onZoomIn || onZoomOut ? (
+        <div style={{ width: '1px', height: '16px', background: 'rgba(255, 255, 255, 0.2)', margin: '0 2px' }} />
+      ) : null}
+
       {presets.map((preset) => {
         const isActive = activePreset === preset;
         return (
