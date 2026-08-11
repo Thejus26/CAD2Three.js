@@ -5,7 +5,7 @@ describe('Dropzone Component', () => {
   it('renders dropzone instructions', () => {
     render(<Dropzone onFileLoaded={vi.fn()} onError={vi.fn()} />);
     expect(screen.getByText(/Drop CAD model here/i)).toBeInTheDocument();
-    expect(screen.getByText(/Supports .STL, .OBJ files/i)).toBeInTheDocument();
+    expect(screen.getByText(/Supports STEP/i)).toBeInTheDocument();
   });
 
   it('rejects unsupported file formats', () => {

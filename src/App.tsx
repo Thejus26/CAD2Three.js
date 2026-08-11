@@ -16,6 +16,7 @@ import { createClippingPlanes, INITIAL_CLIPPING_STATE, type ClippingPlanesState 
 import type { AssemblyNode } from '@/components/assembly/assemblyUtils';
 import { calculateMeshProperties, type MeshProperties } from '@/utils/meshProperties';
 import { STLLoaderService, OBJLoaderService, fitCameraToSelection } from '@/services/loaders';
+import { STEPLoaderService } from '@/services/stepLoader';
 import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 import './App.css';
 
@@ -96,6 +97,11 @@ export function App() {
         setLoadingProgress(60);
         const objService = new OBJLoaderService();
         parsed = objService.parse(text, file.name);
+      } else if (ext === '.stp' || ext === '.step') {
+        const buffer = await file.arrayBuffer();
+        setLoadingProgress(60);
+        const stepService = new STEPLoaderService();
+        parsed = stepService.parse(buffer, file.name);
       } else {
         throw new Error('Unsupported format');
       }
