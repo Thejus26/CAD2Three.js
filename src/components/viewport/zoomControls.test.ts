@@ -20,8 +20,8 @@ describe('zoomControls', () => {
       expect(dist).toBe(MIN_ZOOM_DISTANCE);
     });
 
-    it('enforces EC-2 maximum zoom limit boundary (500.0 units)', () => {
-      const dist = calculateClampedZoomDistance(450, 1.5); // would be 675
+    it('enforces EC-2 maximum zoom limit boundary (50000.0 units)', () => {
+      const dist = calculateClampedZoomDistance(40000, 1.5); // would be 60000
       expect(dist).toBe(MAX_ZOOM_DISTANCE);
     });
 

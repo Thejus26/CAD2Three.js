@@ -101,7 +101,7 @@ export function App() {
         const buffer = await file.arrayBuffer();
         setLoadingProgress(60);
         const stepService = new STEPLoaderService();
-        parsed = stepService.parse(buffer, file.name);
+        parsed = await stepService.parseAsync(buffer, file.name);
       } else {
         throw new Error('Unsupported format');
       }

@@ -73,18 +73,25 @@ export const fitCameraToSelection = (
   camera: THREE.PerspectiveCamera | THREE.OrthographicCamera,
   controls: { target: THREE.Vector3; update: () => void },
   object: THREE.Object3D,
-  offset = 1.4
+  offset = 1.6
 ) => {
   const boundingBox = new THREE.Box3().setFromObject(object);
   const fov = (camera as THREE.PerspectiveCamera).fov || 50;
   const aspect = (camera as THREE.PerspectiveCamera).aspect || 1.0;
 
-  const { center, cameraPosition } = calculateAutoScale({
+  const { center, cameraPosition, distance } = calculateAutoScale({
     boundingBox,
     fov,
     aspectRatio: aspect,
     offsetFactor: offset,
   });
+
+  // Adjust camera far clipping plane dynamically so large CAD models are never clipped
+  if ((camera as THREE.PerspectiveCamera).isPerspectiveCamera) {
+    const perspCam = camera as THREE.PerspectiveCamera;
+    perspCam.far = Math.max(10000, distance * 10);
+    perspCam.updateProjectionMatrix();
+  }
 
   camera.position.copy(cameraPosition);
   camera.lookAt(center);

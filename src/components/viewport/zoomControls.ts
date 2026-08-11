@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 
 export const MIN_ZOOM_DISTANCE = 0.1;
-export const MAX_ZOOM_DISTANCE = 500.0;
+export const MAX_ZOOM_DISTANCE = 50000.0;
 export const ZOOM_STEP_FACTOR = 0.1; // 10% zoom step
 
 /**
