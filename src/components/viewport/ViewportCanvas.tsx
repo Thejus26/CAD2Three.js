@@ -37,6 +37,7 @@ export const ViewportCanvas: React.FC<ViewportCanvasProps> = ({ children }) => {
     >
       <Canvas
         shadows
+        gl={{ localClippingEnabled: true }}
         camera={{ position: PRESET_POSITIONS.ISO, fov: 50 }}
         style={{ width: '100%', height: '100%' }}
       >

@@ -1,25 +1,27 @@
-# Milestone 4.1: Assembly Tree & Component Inspector UI
+# Milestone 4.2: 3D Precision Tools (Measurement & Clipping)
 
 ## Overview
-Develop the interactive assembly tree component hierarchy navigator, part isolate/hide actions, and physical component properties inspector.
+Implement 3D CAD measurement tools (distance, angles, bounding dimensions) and dynamic cross-section clipping planes.
 
 ## Sub-tasks
 
-### 4.1.1: Assembly Hierarchy Tree View
-- [x] Build recursive tree view component reflecting CAD assembly structure.
-- [x] Implement search/filter bar for assembly components.
-- [x] Add visibility toggles (eye icons), isolate mode, and node selection sync with viewport.
+### 4.2.1: Interactive Measurement Tool
+- [x] Implement Raycasting vertex/edge snapping helper.
+- [x] Build Point-to-Point distance measurement tool with 3D line overlays and HTML annotation labels.
+- [x] Implement 3-point angle measurement tool.
 
-### 4.1.2: Component Properties & Material Inspector
-- [x] Compute and display volume, surface area, bounding box dimensions, and polygon count per selected part.
-- [x] Build material inspector panel allowing live color overrides, metalness/roughness adjustments, and opacity/X-Ray toggles.
+### 4.2.2: Dynamic Sectioning / Clipping Planes
+- [x] Implement X, Y, Z axis clipping planes using WebGL local clipping planes.
+- [x] Build interactive 3D transform gizmo handles for sliding and rotating clipping planes.
+- [x] Render solid stencil caps over cut geometry faces.
 
 ## Testing Process
-- Test assembly tree search filter algorithm and node selection state sync in `src/components/assembly/AssemblyTree.test.tsx`.
-- Unit test geometric volume, surface area, and bounding box calculation utility functions in `src/utils/meshProperties.test.ts`.
-- Run `npm run test:run` to execute assembly inspector tests.
+- Unit test 3D distance and angle calculation math helpers in `src/utils/measurementMath.test.ts`.
+- Test clipping plane normal and constant offset calculation handlers in `src/utils/clippingPlanes.test.ts`.
+- Run `npm run test:run` to execute 3D tool math unit tests.
 
 ## Acceptance Criteria
-- [x] `npm run test:run` passes unit tests for tree filter algorithms and geometric mesh calculations.
-- [x] Clicking a node in the assembly tree highlights the corresponding 3D mesh in the viewport (and vice-versa).
-- [x] Isolate mode dims or hides all unselected components smoothly.
+- [x] `npm run test:run` passes unit tests for measurement math and clipping plane transformations.
+- [x] Distance measurements snap accurately to mesh vertices with < 0.01mm tolerance.
+- [x] Cross-sectioning clips the model smoothly in real-time with solid stencil caps.
+
