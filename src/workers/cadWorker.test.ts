@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import * as Comlink from 'comlink';
-import type { CADWorkerAPI } from './cadWorker.worker';
+import type { CADWorkerAPI, CADParseResult } from './cadWorker.worker';
 
 describe('CADWorker Communication & Transferrable Buffers', () => {
   it('exposes RPC methods and processes ArrayBuffer transfer correctly', async () => {
@@ -12,10 +12,12 @@ describe('CADWorker Communication & Transferrable Buffers', () => {
       async ping() {
         return 'pong';
       }
-      async parseCADFile(fileBuffer: ArrayBuffer, _fileName: string) {
+      async parseCADFile(fileBuffer: ArrayBuffer, _fileName: string): Promise<CADParseResult> {
         return {
           success: true,
-          byteLength: fileBuffer.byteLength
+          byteLength: fileBuffer.byteLength,
+          format: 'stl',
+          meshes: [],
         };
       }
     }
