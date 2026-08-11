@@ -7,9 +7,10 @@ import { PRESET_POSITIONS, type CameraPreset } from './cameraPresetConstants';
 
 export interface ViewportCanvasProps {
   children?: React.ReactNode;
+  onFitToScreen?: () => void;
 }
 
-export const ViewportCanvas: React.FC<ViewportCanvasProps> = ({ children }) => {
+export const ViewportCanvas: React.FC<ViewportCanvasProps> = ({ children, onFitToScreen }) => {
   const [activePreset, setActivePreset] = React.useState<CameraPreset>('ISO');
   const controlsRef = React.useRef<OrbitControlsImpl>(null);
 
@@ -24,9 +25,17 @@ export const ViewportCanvas: React.FC<ViewportCanvasProps> = ({ children }) => {
     }
   };
 
+  const handleDoubleClick = () => {
+    // Trigger auto-scale framing on background double click
+    if (onFitToScreen) {
+      onFitToScreen();
+    }
+  };
+
   return (
     <div
       data-testid="viewport-container"
+      onDoubleClick={handleDoubleClick}
       style={{
         width: '100%',
         height: '100%',

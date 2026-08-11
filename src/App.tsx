@@ -134,11 +134,17 @@ export function App() {
     }
   };
 
-  React.useEffect(() => {
-    if (loadedMesh && meshRef.current && cameraRef.current && controlsRef.current) {
+  const handleZoomToFit = React.useCallback(() => {
+    if (meshRef.current && cameraRef.current && controlsRef.current) {
       fitCameraToSelection(cameraRef.current, controlsRef.current, meshRef.current);
     }
-  }, [loadedMesh]);
+  }, []);
+
+  React.useEffect(() => {
+    if (loadedMesh) {
+      handleZoomToFit();
+    }
+  }, [loadedMesh, handleZoomToFit]);
 
   const handleToggleVisibility = (id: string) => {
     setHiddenIds((prev) => {
@@ -221,6 +227,7 @@ export function App() {
             }}
             clippingState={clippingState}
             onClippingChange={setClippingState}
+            onZoomToFit={handleZoomToFit}
           />
 
           {/* Toast Banner */}
@@ -245,7 +252,7 @@ export function App() {
             </div>
           )}
 
-          <ViewportCanvas>
+          <ViewportCanvas onFitToScreen={handleZoomToFit}>
             {loadedMesh && isMeshVisible ? (
               <mesh
                 ref={meshRef}
