@@ -1,23 +1,24 @@
-# Current Feature: Milestone 1.3 Drag-and-Drop Uploader & Polyhedral Mesh Loaders
+# Milestone 2.1: OpenCascade.js WASM Module & Worker Integration
 
 ## Overview
-Implement client-side drag-and-drop file uploader and integrate Three.js native loaders for polyhedral mesh formats (STL and OBJ).
+Set up OpenCascade.js WebAssembly build and establish off-thread Web Worker architecture for heavy CAD file parsing.
 
-## Active Sub-tasks
-- [ ] Build drag-and-drop overlay zone with format validation (`.stl`, `.obj`).
-- [ ] Create floating loading modal displaying progress percentage and status text.
-- [ ] Add file upload error handling and user notification toasts.
-- [ ] Implement `STLLoaderService` for parsing binary and ASCII STL files into Three.js `BufferGeometry`.
-- [ ] Implement `OBJLoaderService` for parsing OBJ files with optional MTL material files.
-- [ ] Create auto-bounding camera focus helper (`fitCameraToSelection`) to center and frame loaded meshes.
+## Sub-tasks
+
+### 2.1.1: OpenCascade WASM Build & Asset Configuration
+- [ ] Configure custom `opencascade.js` WASM package containing STEP, IGES, BRep, and StlAPI modules.
+- [ ] Configure Vite server response headers for `SharedArrayBuffer` support (`Cross-Origin-Opener-Policy` and `Cross-Origin-Embedder-Policy`).
+
+### 2.1.2: Web Worker Off-Thread Architecture
+- [ ] Implement `cadWorker.worker.ts` for off-thread CAD processing.
+- [ ] Implement `comlink` or ArrayBuffer transferrable messaging protocol between main UI thread and CAD worker.
 
 ## Testing Process
-- Test drag-and-drop dropzone format validation logic and file type rejection in `src/components/uploader/Dropzone.test.tsx`.
-- Unit test `STLLoaderService` and `OBJLoaderService` geometry parsing with mock ArrayBuffers in `src/services/loaders.test.tsx`.
-- Run `npm run test:run` to execute loader and uploader tests.
+- Mock Web Worker messaging in `src/workers/cadWorker.test.ts` to test worker initialization, message serialization, and transferrable ArrayBuffer handling.
+- Verify COOP/COEP header configuration via dev server integration test.
+- Run `npm run test:run` to confirm worker messaging tests pass.
 
 ## Acceptance Criteria
-- [ ] `npm run test:run` passes unit tests for STL/OBJ parsing logic and dropzone file validations.
-- [ ] User can drag and drop `.stl` or `.obj` files into the browser window.
-- [ ] Progress bar updates accurately during parsing.
-- [ ] Loaded models render centered in the viewport with automatically adjusted camera bounds.
+- [ ] `npm run test:run` passes unit tests for CAD worker message passing and memory transfer protocols.
+- [ ] OpenCascade WASM loads cleanly inside Web Worker without blocking main UI thread.
+- [ ] SharedArrayBuffer / transferrable buffers transfer file byte data instantly.
