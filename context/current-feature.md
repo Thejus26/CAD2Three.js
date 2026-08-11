@@ -1,29 +1,19 @@
-# Milestone 2.2: STEP & IGES Parsing & B-Rep Tessellation Engine
+# Milestone 3.1: Architectural BIM (IFC) Integration
 
 ## Overview
-Develop the OpenCascade WASM parsing pipeline for STEP and IGES files, converting B-Rep CAD geometry into Three.js triangulated meshes while retaining assembly hierarchy and color data.
+Integrate `web-ifc` WebAssembly engine for parsing architectural and structural IFC files into Three.js geometries.
 
 ## Sub-tasks
 
-### 2.2.1: STEP / IGES Reader Module
-- [ ] Bind `STEPControl_Reader` and `IGESControl_Reader` in the OpenCascade worker wrapper.
-- [ ] Traverse CAD shape tree topology (Extract Compounds, Sub-shapes, and Part labels).
-
-### 2.2.2: B-Rep Mesh Generator
-- [ ] Implement `BRepMesh_IncrementalMesh` tessellation algorithm.
-- [ ] Add linear and angular deflection quality controls (`Deflection: 0.001mm` to `1.0mm`).
-- [ ] Extract vertex buffers (positions, normals, triangle indices) and CAD RGB colors (`XCAFDoc_ColorTool`).
-
-### 2.2.3: Native WASM Memory Cleanup
-- [ ] Implement garbage collection cleanup logic to call native C++ `.delete()` on OpenCascade C++ handles after mesh extraction to prevent heap memory exhaustion.
+### 3.1.1: Web-IFC WASM Reader Integration
+- [ ] Set up `web-ifc` WASM module inside a dedicated BIM Web Worker.
+- [ ] Parse IFC entity geometry while extracting ExpressIDs, element classifications (Walls, Doors, Slabs, Beams), and material properties.
 
 ## Testing Process
-- Test deflection quality slider calculation and parameter sanitization in `src/services/tessellation.test.ts`.
-- Unit test vertex buffer conversion functions and C++ memory handle disposal triggers in `src/services/occMemory.test.ts`.
-- Run `npm run test:run` to verify tessellation helper tests pass.
+- Test IFC entity classification filter logic and ExpressID property lookup functions in `src/services/ifcParser.test.ts`.
+- Run `npm run test:run` to execute IFC metadata parser tests.
 
 ## Acceptance Criteria
-- [ ] `npm run test:run` passes unit tests for deflection math and native memory disposal handlers.
-- [ ] STEP (`.stp`, `.step`) and IGES (`.igs`, `.iges`) files parse and tessellate without UI freeze.
-- [ ] Assembly tree hierarchy and original CAD colors display accurately in Three.js viewport.
-- [ ] Zero native C++ heap memory leaks detected after processing multiple models.
+- [ ] `npm run test:run` passes unit tests for IFC metadata property parsing and element classification.
+- [ ] Architectural `.ifc` files parse and render in WebGL with correct spatial orientation.
+- [ ] Structural IFC hierarchy and element metadata are preserved.
