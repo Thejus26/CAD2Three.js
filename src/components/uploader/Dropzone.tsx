@@ -76,14 +76,14 @@ export const Dropzone: React.FC<DropzoneProps> = ({ onFileLoaded, onError }) => 
         type="file"
         ref={inputRef}
         onChange={handleInputChange}
-        accept=".stl,.obj"
+        accept=".stl,.obj,.stp,.step,.igs,.iges,.ifc"
         style={{ display: 'none' }}
         data-testid="file-input"
       />
       <span style={{ fontSize: '1.25rem' }}>📁</span>
       <div>
         <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>Drop CAD model here</div>
-        <div style={{ fontSize: '0.75rem', color: '#a6adc8' }}>Supports .STL, .OBJ files</div>
+        <div style={{ fontSize: '0.75rem', color: '#a6adc8' }}>Supports STEP (.stp, .step), STL, OBJ files</div>
       </div>
     </div>
   );

@@ -8,7 +8,7 @@ export interface ParsedMeshResult {
   name: string;
 }
 
-export const SUPPORTED_EXTENSIONS = ['.stl', '.obj'];
+export const SUPPORTED_EXTENSIONS = ['.stl', '.obj', '.stp', '.step', '.igs', '.iges', '.ifc'];
 
 export const validateFileExtension = (filename: string): boolean => {
   const ext = filename.substring(filename.lastIndexOf('.')).toLowerCase();
